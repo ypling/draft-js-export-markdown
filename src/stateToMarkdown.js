@@ -206,8 +206,10 @@ class MarkupGenerator {
       }).join('');
       let entity = entityKey ? Entity.get(entityKey) : null;
       if (entity != null && entity.getType() === ENTITY_TYPE.LINK) {
-        let url = entity.getData().url || '';
-        return `[${content}](${encodeURL(url)})`;
+        let data = entity.getData();
+        let url = data.url || '';
+        let title = data.title ? ` "${escapeTitle(data.title)}"` : '';
+        return `[${content}](${encodeURL(url)}${title})`;
       } else {
         return content;
       }
@@ -233,6 +235,11 @@ function encodeContent(text) {
 // our markdown syntax: `[foo](http://foo/)`
 function encodeURL(url) {
   return url.replace(/\)/g, '%29');
+}
+
+// Escape quotes using backslash.
+function escapeTitle(text) {
+  return text.replace(/"/g, '\\"');
 }
 
 export default function stateToMarkdown(content: ContentState): string {
